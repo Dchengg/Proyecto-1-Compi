@@ -322,16 +322,8 @@ public class Parser {
         Command c2AST;
         System.out.println(currentToken);
         if(currentToken.kind == Token.ELSEIF){
-            System.out.println("entre");
-            acceptIt();
-            Expression e2AST = parseExpression();
-            accept(Token.THEN);
-            Command elseIfCommand = parseCommand();
-            accept(Token.ELSE);
-            Command elseCommand = parseCommand();
-            c2AST = new IfCommand(e2AST, elseIfCommand, elseCommand, commandPos);
+           c2AST = parseElseIf(commandPos);
         }else{
-            System.out.println("no entre");
             accept(Token.ELSE);
             c2AST = parseCommand();
         }
@@ -374,7 +366,22 @@ public class Parser {
 
     return commandAST;
   }
-
+  
+  Command parseElseIf(SourcePosition commandPos) throws SyntaxError{
+      Command command = null; // in case there's a syntactic error
+      if(currentToken.kind == Token.ELSEIF){
+        acceptIt();
+        Expression e2AST = parseExpression();
+        accept(Token.THEN);
+        Command elseIfCommand = parseCommand();
+        command = new IfCommand(e2AST, elseIfCommand,parseElseIf(commandPos), commandPos);
+      }else if(currentToken.kind == Token.ELSE){
+          acceptIt();
+          command = parseCommand();
+      }
+      return command;
+  }
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // EXPRESSIONS
