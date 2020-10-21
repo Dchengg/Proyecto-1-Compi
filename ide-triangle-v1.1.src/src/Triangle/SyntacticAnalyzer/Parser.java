@@ -316,10 +316,13 @@ public class Parser {
       {
         acceptIt();
         Expression eAST = parseExpression();
+        System.out.println(currentToken);
         accept(Token.THEN);
         Command c1AST = parseCommand();
         Command c2AST;
+        System.out.println(currentToken);
         if(currentToken.kind == Token.ELSEIF){
+            System.out.println("entre");
             acceptIt();
             Expression e2AST = parseExpression();
             accept(Token.THEN);
@@ -328,6 +331,7 @@ public class Parser {
             Command elseCommand = parseCommand();
             c2AST = new IfCommand(e2AST, elseIfCommand, elseCommand, commandPos);
         }else{
+            System.out.println("no entre");
             accept(Token.ELSE);
             c2AST = parseCommand();
         }
@@ -356,7 +360,6 @@ public class Parser {
     case Token.ELSE:
     case Token.IN:
     case Token.EOT:
-    case Token.SKIP:
 
       finish(commandPos);
       commandAST = new EmptyCommand(commandPos);

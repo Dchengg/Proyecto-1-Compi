@@ -29,6 +29,7 @@ final class Token extends Object {
 
       while (searching) {
         int comparison = tokenTable[currentKind].compareTo(spelling);
+        
         if (comparison == 0) {
           this.kind = currentKind;
           searching = false;
@@ -71,43 +72,42 @@ final class Token extends Object {
     BEGIN		= 5,
     CONST		= 6,
     DO			= 7,
-    ELSE		= 8,
-    END			= 9,
-    FUNC		= 10,
-    IF			= 11,
-    IN			= 12,
-    LET			= 13,
-    OF			= 14,
-    PROC		= 15,
-    RECORD		= 16,
-    THEN		= 17,
-    TYPE		= 18,
-    VAR			= 19,
-    WHILE		= 20,
+    ELSE		= 8,  
+    ELSEIF              = 9, 
+    END			= 10,
+    FUNC		= 11,
+    IF			= 12,
+    IN			= 13,
+    LET			= 14,
+    OF			= 15,
+    PROC		= 16,
+    RECORD		= 17,
+    THEN		= 18,
+    TYPE		= 19,
+    VAR			= 20,
+    WHILE		= 21,
+    
 
     // punctuation...
-    DOT			= 21,
-    COLON		= 22,
-    SEMICOLON	= 23,
-    COMMA		= 24,
-    BECOMES		= 25,
-    IS			= 26,
+    DOT			= 22,
+    COLON		= 23,
+    SEMICOLON	= 24,
+    COMMA		= 25,
+    BECOMES		= 26,
+    IS			= 27,
 
     // brackets...
-    LPAREN		= 27,
-    RPAREN		= 28,
-    LBRACKET	= 29,
-    RBRACKET	= 30,
-    LCURLY		= 31,
-    RCURLY		= 32,
+    LPAREN		= 28,
+    RPAREN		= 29,
+    LBRACKET	= 30,
+    RBRACKET	= 31,
+    LCURLY		= 32,
+    RCURLY		= 33,
 
     // special tokens...
-    EOT			= 33,
-    ERROR		= 34,
-  
-    //Extention additions...
-    SKIP                = 35,
-    ELSEIF              = 36;
+    EOT			= 34,
+    ERROR		= 35;
+    
 
   private static String[] tokenTable = new String[] {
     "<int>",
@@ -119,6 +119,7 @@ final class Token extends Object {
     "const",
     "do",
     "else",
+    "elseif",
     "end",
     "func",
     "if",
@@ -145,9 +146,6 @@ final class Token extends Object {
     "}",
     "",
     "<error>",
-     //Tokens agregados
-    "skip" ,
-    "elseif"
   };
 
   private final static int	firstReservedWord = Token.ARRAY,
