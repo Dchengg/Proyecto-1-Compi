@@ -316,11 +316,9 @@ public class Parser {
       {
         acceptIt();
         Expression eAST = parseExpression();
-        System.out.println(currentToken);
         accept(Token.THEN);
         Command c1AST = parseCommand();
         Command c2AST;
-        System.out.println(currentToken);
         if(currentToken.kind == Token.ELSEIF){
            c2AST = parseElseIf(commandPos);
         }else{
@@ -333,6 +331,16 @@ public class Parser {
         
       }
       break;
+    
+    case Token.SELECT:{
+        acceptIt();
+        //Expression eAST = parseExpression();
+        System.out.println(currentToken);
+        accept(Token.FROM);
+        parseCases();
+        accept(Token.END);
+    }
+    break;
 
     case Token.WHILE:
       {
@@ -381,6 +389,16 @@ public class Parser {
       }
       return command;
   }
+  
+///////////////////////////////////////////////////////////////////////////////
+//
+// CASES
+//
+///////////////////////////////////////////////////////////////////////////////
+  void parseCases(){
+      System.out.println("AAAAAAAAAAAAAAAAAAAAAa");
+  };
+  
   
 ///////////////////////////////////////////////////////////////////////////////
 //

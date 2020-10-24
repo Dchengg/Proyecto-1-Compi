@@ -30,6 +30,8 @@ final class Token extends Object {
       while (searching) {
         int comparison = tokenTable[currentKind].compareTo(spelling);
         
+        //if(spelling.equals("from")) System.out.println(tokenTable[currentKind]);
+        
         if (comparison == 0) {
           this.kind = currentKind;
           searching = false;
@@ -70,43 +72,53 @@ final class Token extends Object {
     // reserved words - must be in alphabetical order...
     ARRAY		= 4,
     BEGIN		= 5,
-    CONST		= 6,
-    DO			= 7,
-    ELSE		= 8,  
-    ELSEIF              = 9, 
-    END			= 10,
-    FUNC		= 11,
-    IF			= 12,
-    IN			= 13,
-    LET			= 14,
-    OF			= 15,
-    PROC		= 16,
-    RECORD		= 17,
-    THEN		= 18,
-    TYPE		= 19,
-    VAR			= 20,
-    WHILE		= 21,
+    CASE                = 6,
+    CASES               = 7,
+    CONST		= 8,
+    CONTINUE            = 9,
+    DO			= 10,
+    ELSE		= 11,
+    ELSEIF              = 12, 
+    END			= 13,
+    FROM                = 14,
+    FUNC		= 15,
+    IF			= 16,
+    IN			= 17,
+    LEAVE               = 18,
+    LET			= 19,
+    LOCAL               = 20,
+    LOOP                = 21,
+    OF			= 22,
+    PROC		= 23,
+    RECORD		= 24,
+    RECURSIVE           = 25,
+    SELECT              = 26,
+    THEN		= 27,
+    TYPE		= 28,
+    UNTIL               = 29,
+    VAR			= 30,
+    WHILE		= 31,
     
 
     // punctuation...
-    DOT			= 22,
-    COLON		= 23,
-    SEMICOLON	= 24,
-    COMMA		= 25,
-    BECOMES		= 26,
-    IS			= 27,
+    DOT			= 32,
+    COLON		= 33,
+    SEMICOLON           = 34,
+    COMMA		= 35,
+    BECOMES		= 36,
+    IS			= 37,
 
     // brackets...
-    LPAREN		= 28,
-    RPAREN		= 29,
-    LBRACKET	= 30,
-    RBRACKET	= 31,
-    LCURLY		= 32,
-    RCURLY		= 33,
+    LPAREN		= 38,
+    RPAREN		= 39,
+    LBRACKET            = 40,
+    RBRACKET            = 41,
+    LCURLY		= 42,
+    RCURLY		= 43,
 
     // special tokens...
-    EOT			= 34,
-    ERROR		= 35;
+    EOT			= 40,
+    ERROR		= 41;
     
 
   private static String[] tokenTable = new String[] {
@@ -116,20 +128,30 @@ final class Token extends Object {
     "<operator>",
     "array",
     "begin",
+    "case",
+    "cases",
     "const",
+    "continue",
     "do",
     "else",
     "elseif",
     "end",
+    "from",
     "func",
     "if",
     "in",
+    "leave",
     "let",
+    "local",
+    "loop",
     "of",
     "proc",
     "record",
+    "recursive",
+    "select",
     "then",
     "type",
+    "until",
     "var",
     "while",
     ".",
