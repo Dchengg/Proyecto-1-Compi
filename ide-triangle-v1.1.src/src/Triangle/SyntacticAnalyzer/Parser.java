@@ -24,6 +24,7 @@ import Triangle.AbstractSyntaxTrees.AssignCommand;
 import Triangle.AbstractSyntaxTrees.BinaryExpression;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
 import Triangle.AbstractSyntaxTrees.Command;
@@ -334,10 +335,10 @@ public class Parser {
     
     case Token.SELECT:{
         acceptIt();
-        //Expression eAST = parseExpression();
+        Expression eAST = parseExpression();
         System.out.println(currentToken);
         accept(Token.FROM);
-        parseCases();
+        parseCases(); //La función acepta como parámetro eAST y luego desde parseCases se evalúa y se llama al comando necesario??
         accept(Token.END);
     }
     break;
@@ -395,8 +396,20 @@ public class Parser {
 // CASES
 //
 ///////////////////////////////////////////////////////////////////////////////
-  void parseCases(){
-      System.out.println("AAAAAAAAAAAAAAAAAAAAAa");
+  
+  Cases parseCases() throws SyntaxError{
+      Cases casesAST = null;
+      
+      SourcePosition casesPos = new SourcePosition();
+      start(casesPos);
+      //casesAST = parseSelectCommand();
+      while (currentToken.kind == Token.SEMICOLON) {
+        acceptIt();
+        Command c2AST = parseSingleCommand();
+        finish(casesPos);
+        //casesAST = new SequentialCommand(casesAST, c2AST, casesPos);
+      }
+      return casesAST;
   };
   
   
