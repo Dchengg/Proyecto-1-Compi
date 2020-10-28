@@ -269,7 +269,7 @@ public class Parser {
 
     SourcePosition commandPos = new SourcePosition();
     start(commandPos);
-
+    System.out.println(currentToken);
     switch (currentToken.kind) {
 
     case Token.IDENTIFIER:
@@ -284,7 +284,9 @@ public class Parser {
 
         } else {
 
+          
           Vname vAST = parseRestOfVname(iAST);
+          
           accept(Token.BECOMES);
           Expression eAST = parseExpression();
           finish(commandPos);
@@ -304,6 +306,7 @@ public class Parser {
         acceptIt();
         Declaration dAST = parseDeclaration();
         accept(Token.IN);
+        System.out.println(currentToken);
         Command cAST = parseCommand();
         accept(Token.END);
         finish(commandPos);
@@ -354,13 +357,17 @@ public class Parser {
       break;
   
       
-    
+    case Token.SKIP:
+      acceptIt();
+      finish(commandPos);
+      commandAST = new EmptyCommand(commandPos);
+      break;
+      
     case Token.SEMICOLON:
     case Token.END:
     case Token.ELSE:
     case Token.IN:
     case Token.EOT:
-
       finish(commandPos);
       commandAST = new EmptyCommand(commandPos);
       break;
@@ -636,15 +643,98 @@ public class Parser {
 
     SourcePosition declarationPos = new SourcePosition();
     start(declarationPos);
-    declarationAST = parseSingleDeclaration();
+    System.out.println(currentToken);
+    declarationAST = parseCompoundDeclaration();
     while (currentToken.kind == Token.SEMICOLON) {
       acceptIt();
-      Declaration d2AST = parseSingleDeclaration();
+      Declaration d2AST = parseCompoundDeclaration();
       finish(declarationPos);
       declarationAST = new SequentialDeclaration(declarationAST, d2AST,
         declarationPos);
     }
     return declarationAST;
+  }
+  
+  Declaration parseCompoundDeclaration() throws SyntaxError{
+      Declaration declarationAST = null;
+      SourcePosition declarationPos = new SourcePosition();
+      start(declarationPos);
+      switch(currentToken.kind){
+          case Token.RECURSIVE:
+          {
+              acceptIt();
+              declarationAST = parseProcFucs();
+              accept(Token.END);
+          }
+          break;
+          
+          case Token.LOCAL:
+          {
+              acceptIt();
+              Declaration dAST = parseDeclaration();
+              accept(Token.IN);
+              Declaration d2AST = parseDeclaration();
+              accept(Token.END);
+              declarationAST = new SequentialDeclaration(dAST, d2AST, declarationPos);
+          }
+          break;
+          default:
+              declarationAST = parseSingleDeclaration();
+      }
+      return declarationAST;
+  }
+  
+    Declaration parseProcFucs() throws SyntaxError{
+        Declaration declarationAST = null;
+        SourcePosition declarationPos = new SourcePosition();
+        start(declarationPos);
+        System.out.println(currentToken);
+        declarationAST = parseProcFunc();
+        if(currentToken.kind == Token.VERTICALBAR){
+            acceptIt();
+            Declaration d2AST = parseProcFunc();
+            declarationAST = new SequentialDeclaration(declarationAST, d2AST, declarationPos);
+        }
+        
+        return declarationAST;
+    }
+  
+   Declaration parseProcFunc() throws SyntaxError{
+      Declaration declarationAST = null;
+      SourcePosition declarationPos = new SourcePosition();
+      start(declarationPos);
+      switch(currentToken.kind){
+          case Token.PROC:
+          {
+              acceptIt();
+              Identifier iAST = parseIdentifier();
+              System.out.println(currentToken);
+              accept(Token.LPAREN);
+              FormalParameterSequence fpsAST = parseFormalParameterSequence();
+              accept(Token.RPAREN);
+              accept(Token.IS);
+              Command cAST = parseCommand();
+              accept(Token.END);
+              declarationAST = new ProcDeclaration(iAST, fpsAST, cAST, declarationPos);
+          }
+          break;
+          case Token.FUNC:
+          {
+              acceptIt();
+              Identifier iAST = parseIdentifier();
+              accept(Token.LPAREN);
+              FormalParameterSequence fpsAST = parseFormalParameterSequence();
+              accept(Token.RPAREN);
+              accept(Token.COLON);
+              TypeDenoter tAST = parseTypeDenoter();
+              accept(Token.IS);
+              Expression eAST = parseExpression();
+              declarationAST = new FuncDeclaration(iAST, fpsAST, tAST, eAST, declarationPos);
+          }
+          
+          break;
+      }
+      return declarationAST;
   }
 
   Declaration parseSingleDeclaration() throws SyntaxError {
@@ -652,7 +742,7 @@ public class Parser {
 
     SourcePosition declarationPos = new SourcePosition();
     start(declarationPos);
-
+    System.out.println(currentToken);
     switch (currentToken.kind) {
 
     case Token.CONST:
@@ -685,7 +775,8 @@ public class Parser {
         FormalParameterSequence fpsAST = parseFormalParameterSequence();
         accept(Token.RPAREN);
         accept(Token.IS);
-        Command cAST = parseSingleCommand();
+        Command cAST = parseCommand();
+        accept(Token.END);
         finish(declarationPos);
         declarationAST = new ProcDeclaration(iAST, fpsAST, cAST, declarationPos);
       }
@@ -749,6 +840,7 @@ public class Parser {
     }
     return formalsAST;
   }
+  
 
   FormalParameterSequence parseProperFormalParameterSequence() throws SyntaxError {
     FormalParameterSequence formalsAST = null; // in case there's a syntactic error;
@@ -769,6 +861,9 @@ public class Parser {
     }
     return formalsAST;
   }
+  
+  
+  
 
   FormalParameter parseFormalParameter() throws SyntaxError {
     FormalParameter formalAST = null; // in case there's a syntactic error;
