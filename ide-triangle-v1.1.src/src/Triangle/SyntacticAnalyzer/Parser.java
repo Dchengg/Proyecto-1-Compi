@@ -690,7 +690,7 @@ public class Parser {
         start(declarationPos);
         System.out.println(currentToken);
         declarationAST = parseProcFunc();
-        if(currentToken.kind == Token.VERTICALBAR){
+        while(currentToken.kind == Token.VERTICALBAR){
             acceptIt();
             Declaration d2AST = parseProcFunc();
             declarationAST = new SequentialDeclaration(declarationAST, d2AST, declarationPos);
