@@ -78,6 +78,7 @@ import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
+import Triangle.AbstractSyntaxTrees.VarLocalDeclaration;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
@@ -295,18 +296,11 @@ public class Parser {
       }
       break;
 
-    case Token.BEGIN:
-      acceptIt();
-      commandAST = parseCommand();
-      accept(Token.END);
-      break;
-
     case Token.LET:
       {
         acceptIt();
         Declaration dAST = parseDeclaration();
         accept(Token.IN);
-        System.out.println(currentToken);
         Command cAST = parseCommand();
         accept(Token.END);
         finish(commandPos);
@@ -364,10 +358,10 @@ public class Parser {
       break;
       
     case Token.SEMICOLON:
-    case Token.END:
+    //case Token.END: 
     case Token.ELSE:
     case Token.IN:
-    case Token.EOT:
+    //se quito el EOT para que tire un comando vacia
       finish(commandPos);
       commandAST = new EmptyCommand(commandPos);
       break;
@@ -689,13 +683,16 @@ public class Parser {
         SourcePosition declarationPos = new SourcePosition();
         start(declarationPos);
         System.out.println(currentToken);
-        declarationAST = parseProcFunc();
+        Declaration dAST = parseProcFunc();
+        accept(Token.VERTICALBAR);
+        Declaration d2AST = parseProcFunc();
+        declarationAST = new SequentialDeclaration(declarationAST, d2AST, declarationPos);
         while(currentToken.kind == Token.VERTICALBAR){
             acceptIt();
-            Declaration d2AST = parseProcFunc();
-            declarationAST = new SequentialDeclaration(declarationAST, d2AST, declarationPos);
+            Declaration d3AST = parseProcFunc();
+            declarationAST = new SequentialDeclaration(declarationAST, d3AST, declarationPos);
         }
-        
+            
         return declarationAST;
     }
   
@@ -733,6 +730,11 @@ public class Parser {
           }
           
           break;
+          
+          default: 
+              syntacticError("\"%\" cannot start a declaration", currentToken.spelling);
+              break;
+          
       }
       return declarationAST;
   }
@@ -760,10 +762,18 @@ public class Parser {
       {
         acceptIt();
         Identifier iAST = parseIdentifier();
-        accept(Token.COLON);
-        TypeDenoter tAST = parseTypeDenoter();
-        finish(declarationPos);
-        declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
+        if(currentToken.kind == Token.COLON){
+            acceptIt();
+            TypeDenoter tAST = parseTypeDenoter();
+            finish(declarationPos);
+            declarationAST = new VarDeclaration(iAST, tAST, declarationPos);
+        }else{
+            accept(Token.BECOMES);
+            Expression eAST = parseExpression();
+            finish(declarationPos);
+            declarationAST =  new VarLocalDeclaration(iAST, eAST, declarationPos);
+        }
+        
       }
       break;
 

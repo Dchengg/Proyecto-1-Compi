@@ -1,0 +1,13 @@
+let
+	local 
+		var a := 5;
+		var b := 1
+	! Falta el in del private, o un ;, que tampoco está ahí
+		var c := a*b*2
+	end ;
+	var d := 5
+in
+	putint(c)
+end
+
+! Error: Falta el in del local

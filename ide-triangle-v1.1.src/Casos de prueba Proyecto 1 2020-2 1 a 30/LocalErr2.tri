@@ -1,0 +1,14 @@
+let
+	local
+		var a := 5;
+		var b := 15
+	in
+		var c := a*b*2
+	! end : falta el end, pero podría no señalar eso como error aquí
+	;
+	var d := 5 !  sino más bien aquí;
+in
+	putint(c)
+end
+
+! Error: Falta el end del private
