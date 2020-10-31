@@ -46,6 +46,8 @@ import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ForCommand;
+import Triangle.AbstractSyntaxTrees.ForDeclare;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
@@ -82,6 +84,7 @@ import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
+import Triangle.AbstractSyntaxTrees.UntilCommand;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
@@ -157,8 +160,26 @@ public final class Encoder implements Visitor {
     emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
     return null;
   }
-
-
+  
+  public Object visitForDeclare(ForDeclare ast, Object o){
+      ast.iAST.visit(this, o);
+      ast.eAST.visit(this, o);
+      return null;
+  }
+  
+    public Object visitForCommand(ForCommand ast, Object o){
+      ast.E.visit(this, o);
+      ast.C.visit(this, o);
+      ast.F.visit(this, o);
+      return null;
+  }
+    
+   public Object visitUntilCommand(UntilCommand ast, Object o){
+      ast.E.visit(this, o);
+      ast.C.visit(this, o);
+      return null;
+   }
+  
   // Expressions
   public Object visitArrayExpression(ArrayExpression ast, Object o) {
     ast.type.visit(this, null);

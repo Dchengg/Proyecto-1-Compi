@@ -1,0 +1,19 @@
+let
+ var num: Integer
+in
+begin
+ getint (var num); ! Number of iterations.
+ if num = 1 
+ then
+ putint(num)
+ elseif num = 2
+ then 
+ putint(50)
+ elseif num = 2
+ then
+ putint(75)
+ else
+ putint(404)
+ end
+ end
+end

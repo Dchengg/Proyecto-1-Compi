@@ -38,6 +38,8 @@ import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.Expression;
 import Triangle.AbstractSyntaxTrees.FieldTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ForCommand;
+import Triangle.AbstractSyntaxTrees.ForDeclare;
 import Triangle.AbstractSyntaxTrees.FormalParameter;
 import Triangle.AbstractSyntaxTrees.FormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
@@ -76,6 +78,7 @@ import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.TypeDenoter;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
+import Triangle.AbstractSyntaxTrees.UntilCommand;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
@@ -338,23 +341,74 @@ public class Parser {
         Expression eAST = parseExpression();
         System.out.println(currentToken);
         accept(Token.FROM);
-        parseCases(); //La función acepta como parámetro eAST y luego desde parseCases se evalúa y se llama al comando necesario??
+        parseCases();
         accept(Token.END);
     }
     break;
 
-    case Token.WHILE:
-      {
+    case Token.LOOP:
+    {
         acceptIt();
-        Expression eAST = parseExpression();
-        accept(Token.DO);
-        Command cAST = parseSingleCommand();
-        finish(commandPos);
-        commandAST = new WhileCommand(eAST, cAST, commandPos);
-      }
-      break;
-  
-      
+        switch(currentToken.kind){
+            case Token.WHILE:
+            {
+                acceptIt();
+                Expression eAST = parseExpression();
+                accept(Token.DO);
+                Command cAST = parseSingleCommand();
+                accept(Token.END);
+                finish(commandPos);
+                commandAST = new WhileCommand(eAST, cAST, commandPos);
+              }
+              break;
+
+            case Token.UNTIL:
+            {
+                acceptIt();
+                Expression eAST = parseExpression();
+                accept(Token.DO);
+                Command cAST = parseSingleCommand();
+                accept(Token.END);
+                finish(commandPos);
+                commandAST = new UntilCommand(eAST, cAST, commandPos);
+            }
+              break;
+
+            case Token.DO:
+            {
+                acceptIt();
+                Command cAST = parseSingleCommand();
+                if(currentToken.kind == Token.WHILE){
+                    accept(Token.WHILE);
+                    Expression eAST = parseExpression();
+                    accept(Token.END);
+                    finish(commandPos);
+                    commandAST = new WhileCommand(eAST, cAST, commandPos);
+                }else if (currentToken.kind == Token.UNTIL){
+                    accept(Token.UNTIL);
+                    Expression eAST = parseExpression();
+                    accept(Token.END);
+                    finish(commandPos);
+                    commandAST = new UntilCommand(eAST, cAST, commandPos);
+                }
+            }
+                break;
+
+            case Token.FOR:
+            {
+                acceptIt();
+                ForDeclare fAST = parseFor();
+                accept(Token.TO);
+                Expression eAST  = parseExpression();
+                accept(Token.DO);
+                Command cAST = parseCommand();
+                accept(Token.END);
+                finish(commandPos);
+                commandAST = new ForCommand(eAST, cAST, fAST, commandPos);
+            }
+        }
+    }
+    break;
     
     case Token.SEMICOLON:
     case Token.END:
@@ -374,6 +428,18 @@ public class Parser {
     }
 
     return commandAST;
+  }
+  
+  ForDeclare parseFor() throws SyntaxError{
+      ForDeclare fAST = null; // in case there's a syntactic error
+      SourcePosition fPos = new SourcePosition();
+      start(fPos);
+      Identifier iAST = parseIdentifier();
+      accept(Token.BECOMES);
+      Expression eAST = parseExpression();
+      fAST = new ForDeclare(iAST, eAST, fPos);
+      finish(fPos);
+      return fAST;
   }
   
   Command parseElseIf(SourcePosition commandPos) throws SyntaxError{
