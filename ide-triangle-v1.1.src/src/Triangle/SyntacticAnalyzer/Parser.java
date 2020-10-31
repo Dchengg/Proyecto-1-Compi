@@ -312,7 +312,6 @@ public class Parser {
         accept(Token.END);
         finish(commandPos);
         commandAST = new LetCommand(dAST, cAST, commandPos);
-        
       }
       break;
     
@@ -332,7 +331,6 @@ public class Parser {
         accept(Token.END);
         finish(commandPos);
         commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos);
-        
       }
       break;
     
@@ -406,6 +404,7 @@ public class Parser {
                 finish(commandPos);
                 commandAST = new ForCommand(eAST, cAST, fAST, commandPos);
             }
+            break;
         }
     }
     break;
